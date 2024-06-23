@@ -1,35 +1,49 @@
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-public class Solution {
+class Solution {
     public int longestSubarray(int[] nums, int limit) {
-        // Deque<Integer> max = new ArrayDeque<>();
-        // Deque<Integer> min = new ArrayDeque<>();
-        PriorityQueue<Integer> max = new PriorityQueue<>(Comparator.comparingInt(i -> -nums[i]));
-        PriorityQueue<Integer> min = new PriorityQueue<>(Comparator.comparingInt(i -> nums[i]));
+        Deque<Integer> max = new ArrayDeque<>();
+        Deque<Integer> min = new ArrayDeque<>();
+
         int n = nums.length;
-        min.offer(0);
-        max.offer(0);
+        min.offerFirst(0);
+        max.offerFirst(0);
         int res = 1;
         int start = 0;
-        for (int i = 1; i < n; i++) {
 
-            min.offer(i);
-            max.offer(i);
-            while (nums[max.peek()] - nums[min.peek()] > limit) {
-                start++;
-                while (!max.isEmpty() && max.peek() < start) {
-                    max.poll();
+        for(int i = 1; i < n;i++) {
+            if(nums[i] <= nums[min.peekFirst()]){
+                min.offerFirst(i);
+            }else {
+                while(!min.isEmpty() && (min.peekLast() < start || nums[min.peekLast()] >= nums[i])) {
+                    min.pollLast();
                 }
-                while (!min.isEmpty() && min.peek() < start) {
-                    min.poll();
+                min.offerLast(i);
+            }
+
+            if(nums[i] >= nums[max.peekFirst()]){
+                max.offerFirst(i);
+            }else {
+                while(!max.isEmpty() && (max.peekLast() < start || nums[max.peekLast()] <= nums[i])) {
+                    max.pollLast();
+                }
+                max.offerLast(i);
+            }
+            while (nums[max.peekFirst()] - nums[min.peekFirst()] > limit) {
+                start++;
+                while(!min.isEmpty() && min.peekFirst() < start) {
+                    min.pollFirst();
+                }
+                while(!max.isEmpty() && max.peekFirst() < start ) {
+                    max.pollFirst();
                 }
             }
             res = Math.max(res, i - start + 1);
+
         }
 
         return res;
 
     }
 }
-
