@@ -1,3 +1,6 @@
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
 public class Solution {
     public int longestSubarray(int[] nums, int limit) {
         // Deque<Integer> max = new ArrayDeque<>();
@@ -10,12 +13,7 @@ public class Solution {
         int res = 1;
         int start = 0;
         for (int i = 1; i < n; i++) {
-            while (!max.isEmpty() && max.peek() < start) {
-                max.poll();
-            }
-            while (!min.isEmpty() && min.peek() < start) {
-                min.poll();
-            }
+
             min.offer(i);
             max.offer(i);
             while (nums[max.peek()] - nums[min.peek()] > limit) {
